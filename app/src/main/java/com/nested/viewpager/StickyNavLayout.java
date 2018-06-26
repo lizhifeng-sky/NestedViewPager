@@ -26,7 +26,7 @@ import android.widget.OverScroller;
 
 public class StickyNavLayout extends LinearLayout implements NestedScrollingParent {
     private static final String TAG = "StickyNavLayout";
-    private int minDuration = 600;
+    private int minDuration = 100;
 
     private View mTop;
     private View mNav;
@@ -49,15 +49,12 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         super(context, attrs);
         setOrientation(LinearLayout.VERTICAL);
 
-        mScroller = new OverScroller(context);
+        mScroller = new OverScroller(context, new LinearInterpolator());
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mMaximumVelocity = ViewConfiguration.get(context)
                 .getScaledMaximumFlingVelocity();
         mMinimumVelocity = ViewConfiguration.get(context)
                 .getScaledMinimumFlingVelocity();
-//        mMaximumVelocity=2000;
-//        mMinimumVelocity=800;
-
     }
 
     private void initVelocityTrackerIfNotExists() {
@@ -76,9 +73,18 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        //如果动画或者 scroller 正在执行  不接受事件
+        //如果动画或者 scroller 正在执行  不接受事件 避免接受多个事件 造成滑动混乱
+//        if ((mOffsetAnimator != null && mOffsetAnimator.isRunning()) | (mScroller != null && !mScroller.isFinished())) {
+//            return false;
+//        }
+        //如果动画或者 scroller 正在执行  则 取消当前执行的动画或者 scroller 继续接受新的事件
         if ((mOffsetAnimator != null && mOffsetAnimator.isRunning()) | (mScroller != null && !mScroller.isFinished())) {
-            return false;
+            if (mOffsetAnimator != null && mOffsetAnimator.isRunning()) {
+                mOffsetAnimator.cancel();
+            }
+            if (mScroller != null && !mScroller.isFinished()) {
+                mScroller.abortAnimation();
+            }
         }
         return super.dispatchTouchEvent(ev);
     }
@@ -92,12 +98,14 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                Log.e("event", "ACTION_DOWN");
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
                 }
                 mLastY = y;
                 return true;
             case MotionEvent.ACTION_MOVE:
+                Log.e("event", "ACTION_MOVE");
                 float dy = y - mLastY;
                 if (!mDragging && Math.abs(dy) > mTouchSlop) {
                     mDragging = true;
@@ -108,6 +116,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
                 mLastY = y;
                 break;
             case MotionEvent.ACTION_CANCEL:
+                Log.e("event", "ACTION_CANCEL");
                 mDragging = false;
                 recycleVelocityTracker();
                 if (!mScroller.isFinished()) {
@@ -115,9 +124,11 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
                 }
                 break;
             case MotionEvent.ACTION_UP:
+                Log.e("event", "ACTION_UP");
                 mDragging = false;
                 mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
                 int velocityY = (int) mVelocityTracker.getYVelocity();
+                Log.e("velocity", "Y velocity: " + mVelocityTracker.getYVelocity()+"   max:"+mMaximumVelocity+"   min:"+mMinimumVelocity);
                 if (Math.abs(velocityY) > mMinimumVelocity) {
                     fling(-velocityY);
                 }
@@ -144,14 +155,13 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
         //不限制顶部的高度
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         getChildAt(0).measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
         ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
-        Log.e(TAG, "top:  "+ScreenUtils.checkDeviceHasNavigationBar(getContext()));
+        Log.e(TAG, "top:  " + ScreenUtils.checkDeviceHasNavigationBar(getContext()));
         if (ScreenUtils.checkDeviceHasNavigationBar(getContext())) {
-            if (mViewPager.getMeasuredHeight()==0) {
+            if (mViewPager.getMeasuredHeight() == 0) {
                 params.height = getMeasuredHeight()
                         - mNav.getMeasuredHeight()
 
@@ -159,16 +169,16 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
                         + ScreenUtils.getStatusBarHeight(getContext());
             }
 
-            Log.e("viewpager_",ScreenUtils.checkDeviceHasNavigationBar(getContext())+"  "+mViewPager.getMeasuredHeight());
+            Log.e("viewpager_", ScreenUtils.checkDeviceHasNavigationBar(getContext()) + "  " + mViewPager.getMeasuredHeight());
             setMeasuredDimension(getMeasuredWidth(),
                     mTop.getMeasuredHeight()
-                    + mNav.getMeasuredHeight()
-                    + mViewPager.getMeasuredHeight());
+                            + mNav.getMeasuredHeight()
+                            + mViewPager.getMeasuredHeight());
 
         } else {
             params.height = getMeasuredHeight()
                     - mNav.getMeasuredHeight();
-            Log.e("viewpager_",ScreenUtils.checkDeviceHasNavigationBar(getContext())+"  "+mViewPager.getMeasuredHeight());
+            Log.e("viewpager_", ScreenUtils.checkDeviceHasNavigationBar(getContext()) + "  " + mViewPager.getMeasuredHeight());
             setMeasuredDimension(getMeasuredWidth(),
                     mTop.getMeasuredHeight()
                             + mNav.getMeasuredHeight()
@@ -222,7 +232,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
     }
 
     private void animateScroll(float velocityY, final int duration, boolean consumed) {
-        Log.e(TAG, "animateScroll");
+        Log.e(TAG, " 惯性嵌套滑动 animateScroll   " + "duration：" + duration + "    consumed：" + consumed);
         final int currentOffset = getScrollY();
         final int topHeight = mTop.getHeight();
         if (mOffsetAnimator == null) {
@@ -233,7 +243,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     if (animation.getAnimatedValue() instanceof Integer) {
-                        Log.e(TAG, "onAnimationUpdate "+animation.getAnimatedValue());
+                        Log.e(TAG, "duration " + mOffsetAnimator.getDuration());
                         scrollTo(0, (Integer) animation.getAnimatedValue());
                     }
                 }
@@ -241,8 +251,8 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         } else {
             mOffsetAnimator.cancel();
         }
-        mOffsetAnimator.setDuration(Math.min(duration, minDuration));
-
+//        mOffsetAnimator.setDuration(Math.min(duration, minDuration));
+        mOffsetAnimator.setDuration(100);
         if (!mOffsetAnimator.isRunning()) {
             if (velocityY >= 0) {
                 mOffsetAnimator.setIntValues(currentOffset, topHeight);
@@ -250,8 +260,8 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
             } else {
                 //如果子View没有消耗down事件 那么就让自身滑倒0位置
                 if (!consumed) {
-//                    mOffsetAnimator.setIntValues(currentOffset, 0);
-                    mOffsetAnimator.setIntValues(currentOffset);
+                    Log.e("lzf_currentOffset", currentOffset + "");
+                    mOffsetAnimator.setIntValues(currentOffset, 0);
                     mOffsetAnimator.start();
                 }
             }
@@ -283,65 +293,84 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 
     //nested
+    // 开启 停止嵌套滚动时被调用 start
     @Override
     public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int nestedScrollAxes) {
-        Log.e(TAG, "onStartNestedScroll" + ViewCompat.SCROLL_AXIS_VERTICAL + nestedScrollAxes);
+        Log.e(TAG, "嵌套滚动 开始 onStartNestedScroll");
         return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
     }
 
     @Override
     public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, int nestedScrollAxes) {
-        Log.e(TAG, "onNestedScrollAccepted");
+        Log.e(TAG, "嵌套滚动 接受 onNestedScrollAccepted");
     }
 
     @Override
     public void onStopNestedScroll(@NonNull View target) {
-        Log.e(TAG, "onStopNestedScroll");
+        Log.e(TAG, "嵌套滚动 停止 onStopNestedScroll");
     }
+    // 开启 停止嵌套滚动时被调用 start
 
+
+    // 触摸嵌套滑动 时被调用 start
     @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        Log.e(TAG, "onNestedScroll");
+        Log.e("press", "触摸嵌套滑动 子view 先滚动  onNestedScroll     已消费的Y:" + dyConsumed + "   为消费的Y:" + dyUnconsumed);
     }
 
     @Override
     public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed) {
-        Log.e(TAG, "onNestedPreScroll    "+dy);
+//       consumed  The horizontal and vertical scroll distance consumed by this parent
+        Log.e("press", "触摸嵌套滑动  父容器 先滚动  onNestedPreScroll    " + dy);
         boolean hiddenTop = dy > 0 && getScrollY() < mTopViewHeight;
         boolean showTop = dy < 0 && getScrollY() >= 0 && !target.canScrollVertically(-1);
 
         if (hiddenTop || showTop) {
+            Log.e(TAG, "onNestedPreScroll     hiddenTop  " + hiddenTop + "     showTop " + showTop);
             scrollBy(0, dy);
             consumed[1] = dy;
         }
     }
+    // 触摸嵌套滑动 时被调用 end
+
+    // 惯性嵌套滑动 时被调用 start
+    @Override
+    public boolean onNestedPreFling(@NonNull View target, float velocityX, float velocityY) {
+        //不做拦截 可以传递给子View
+        int[] location = new int[2];
+        target.getLocationInWindow(location);
+        int targetY = location[1];
+        Log.e("onNestedPreFling", "惯性嵌套滑动  父容器 惯性 onNestedPreFling   " + targetY);
+//        if (targetY > mNav.getMeasuredHeight() + ScreenUtils.getStatusBarHeight(getContext())) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+        return false;
+    }
 
     @Override
     public boolean onNestedFling(@NonNull View target, float velocityX, float velocityY, boolean consumed) {
-        Log.e(TAG, "onNestedFling");
+        Log.e("onNestedFling", "惯性嵌套滑动  子view 惯性 onNestedFling");
         //如果是recyclerView 根据判断第一个元素是哪个位置可以判断是否消耗
         //这里判断如果第一个元素的位置是大于TOP_CHILD_FLING_THRESHOLD的
         //认为已经被消耗，在animateScroll里不会对velocityY<0时做处理
         if (target instanceof RecyclerView && velocityY < 0) {
-            final RecyclerView recyclerView = (RecyclerView) target;
-            final View firstChild = recyclerView.getChildAt(0);
-            final int childAdapterPosition = recyclerView.getChildAdapterPosition(firstChild);
+            RecyclerView recyclerView = (RecyclerView) target;
+            View firstChild = recyclerView.getChildAt(0);
+            int childAdapterPosition = recyclerView.getChildAdapterPosition(firstChild);
+            Log.e("lzf_recycler",childAdapterPosition+"");
             consumed = childAdapterPosition > TOP_CHILD_FLING_THRESHOLD;
         }
+        Log.e(TAG, "consumed    " + consumed + "   velocityY:   " + velocityY);
         if (!consumed) {
             animateScroll(velocityY, computeDuration(0), consumed);
         } else {
             animateScroll(velocityY, computeDuration(velocityY), consumed);
         }
-        return true;
-    }
-
-    @Override
-    public boolean onNestedPreFling(@NonNull View target, float velocityX, float velocityY) {
-        //不做拦截 可以传递给子View
-        Log.e(TAG, "onNestedPreFling");
         return false;
     }
+    // 惯性嵌套滑动 时被调用 end
 
     @Override
     public int getNestedScrollAxes() {
