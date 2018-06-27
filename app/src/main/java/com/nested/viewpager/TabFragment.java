@@ -8,10 +8,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.zhy.base.adapter.ViewHolder;
 import com.zhy.base.adapter.recyclerview.CommonAdapter;
 
@@ -42,6 +45,10 @@ public class TabFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_tab, container, false);
         mRecyclerView = (RecyclerView) view
                 .findViewById(R.id.id_stickynavlayout_innerscrollview);
+//        TwinklingRefreshLayout refreshLayout = view.findViewById(R.id.refresh);
+//        refreshLayout.setEnableRefresh(false);
+//        refreshLayout.setEnableLoadmore(true);
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         // mTextView = (TextView) view.findViewById(R.id.id_info);
         // mTextView.setText(mTitle);
@@ -52,7 +59,13 @@ public class TabFragment extends Fragment {
                 holder.setText(R.id.id_info, o);
             }
         });
-
+        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.e("touch","recycler    "+event.getY());
+                return false;
+            }
+        });
         return view;
 
     }

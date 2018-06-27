@@ -11,8 +11,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.LinearLayout;
 
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.zhy.base.adapter.ViewHolder;
 import com.zhy.base.adapter.recyclerview.CommonAdapter;
 
@@ -27,6 +31,8 @@ public class MainActivity extends FragmentActivity {
     private FragmentPagerAdapter mAdapter;
     private TabFragment[] mFragments = new TabFragment[mTitles.length];
     private RecyclerView recyclerView;
+    private TwinklingRefreshLayout refreshLayout;
+    private StickyNavLayout stickyNavLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +68,7 @@ public class MainActivity extends FragmentActivity {
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
-        List<String> mDatas=new ArrayList<>();
+        List<String> mDatas = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
             mDatas.add("横向测试 -> " + i);
         }
@@ -98,6 +104,36 @@ public class MainActivity extends FragmentActivity {
         mIndicator = findViewById(R.id.id_stickynavlayout_indicator);
         mViewPager = findViewById(R.id.id_stickynavlayout_viewpager);
         recyclerView = findViewById(R.id.recycler);
+//        refreshLayout = findViewById(R.id.refresh);
+        stickyNavLayout = findViewById(R.id.stick);
+//        refreshLayout.setEnableRefresh(true);
+//        refreshLayout.setEnableLoadmore(true);
+//        refreshLayout.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+////                if (stickyNavLayout.canScrollVertically(-1))
+////                    //distanceY>0
+////                    //stickyNavLayout.canScrollVertically(-1))=false 不能下拉
+////                    //
+//                float currentY = 0;
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        currentY = event.getY();
+//                        break;
+//                    case MotionEvent.ACTION_MOVE:
+//                        float dy=event.getY()-currentY;
+//                        if (dy>0&&!stickyNavLayout.canScrollVertically(-1)){
+//                            return false;
+//                        }
+//                        if (dy<0&&!stickyNavLayout.canScrollVertically(0)){
+//                            return false;
+//                        }
+//                        currentY=event.getY();
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
         /*
         RelativeLayout ll = (RelativeLayout) findViewById(R.id.id_stickynavlayout_topview);
 		TextView tv = new TextView(this);

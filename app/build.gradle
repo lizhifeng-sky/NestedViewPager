@@ -23,4 +23,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     compile 'com.zhy:base-adapter:2.0.0'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.lcodecorex:tkrefreshlayout:1.0.7'
 }

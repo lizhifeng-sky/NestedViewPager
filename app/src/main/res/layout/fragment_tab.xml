@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/id_stickynavlayout_innerscrollview"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#44ff0000"
-    android:scrollbars="none">
+<!--<com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:id="@+id/refresh"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
-</android.support.v7.widget.RecyclerView>
+    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/id_stickynavlayout_innerscrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#44ff0000"
+        android:scrollbars="none"/>
+<!--</com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>-->
