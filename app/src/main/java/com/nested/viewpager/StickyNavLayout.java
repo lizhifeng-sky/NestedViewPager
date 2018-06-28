@@ -41,6 +41,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
     private float mLastY;
     private boolean mDragging;
+    private boolean isDy=false;
 
     private int TOP_CHILD_FLING_THRESHOLD = 3;
 
@@ -323,7 +324,11 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
     // 触摸嵌套滑动 时被调用 start
     @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        Log.e("press", "触摸嵌套滑动 子view 先滚动  onNestedScroll     已消费的Y:" + dyConsumed + "   为消费的Y:" + dyUnconsumed);
+        Log.e("press", "触摸嵌套滑动 子view 先滚动  onNestedScroll     已消费的Y:" + dyConsumed + "   未消费的Y:" + dyUnconsumed);
+//        if (isDy&&dyConsumed==0){
+////            如果父容器需要消费的 dy>0 &&子view中 onNestedScroll 已经消费的dy=0 说明 到达啦底部 开始加载
+//            scrollBy(0,dyUnconsumed/3);
+//        }
     }
 
     @Override
@@ -333,7 +338,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         Log.e("press", "触摸嵌套滑动  父容器 先滚动  onNestedPreScroll    " + dy);
         boolean hiddenTop = dy > 0 && getScrollY() < mTopViewHeight;
         boolean showTop = dy < 0 && getScrollY() >= 0 && !target.canScrollVertically(-1);
-
+        isDy=dy>0;
         if (hiddenTop || showTop) {
             Log.e(TAG, "onNestedPreScroll     hiddenTop  " + hiddenTop + "     showTop " + showTop);
             scrollBy(0, dy);

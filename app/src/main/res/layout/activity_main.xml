@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--<TextView-->
     <!--android:id="@+id/refresh"-->
     <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
-    <com.nested.viewpager.StickyNavLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--android:layout_height="50dp"-->
+    <!--android:gravity="center"-->
+    <!--android:text="refresh" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/load"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:gravity="center"-->
+    <!--android:text="loading" />-->
+    <!--android:layout_above="@id/load"-->
+    <!--android:layout_below="@id/refresh"-->
+
+    <com.nested.viewpager.StickyNavLayout
         android:id="@+id/stick"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/Blue"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -34,7 +52,7 @@
                 android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/recycler"
-                android:text="我1我2我3我4我5我6我7我8我9我1我2我3我4我5我6我7我8我9我1我2我3我4我5我6我7我8我9" />
+                android:text="@string/hText" />
         </RelativeLayout>
 
         <com.nested.viewpager.SimpleViewPagerIndicator
@@ -48,5 +66,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <!--<TextView-->
+            <!--android:id="@+id/load"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:background="#f00"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:textColor="#fff"-->
+            <!--android:gravity="center"-->
+            <!--android:text="loading" />-->
     </com.nested.viewpager.StickyNavLayout>
-<!--</com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>-->
+
+</RelativeLayout>
