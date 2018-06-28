@@ -48,13 +48,11 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onPageSelected(int position) {
             }
-
             @Override
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
                 mIndicator.scroll(position, positionOffset);
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
 
@@ -65,8 +63,6 @@ public class MainActivity extends FragmentActivity {
 
     private void initDatas() {
         mIndicator.setTitles(mTitles);
-
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
         List<String> mDatas = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
@@ -104,45 +100,6 @@ public class MainActivity extends FragmentActivity {
         mIndicator = findViewById(R.id.id_stickynavlayout_indicator);
         mViewPager = findViewById(R.id.id_stickynavlayout_viewpager);
         recyclerView = findViewById(R.id.recycler);
-//        refreshLayout = findViewById(R.id.refresh);
         stickyNavLayout = findViewById(R.id.stick);
-//        refreshLayout.setEnableRefresh(true);
-//        refreshLayout.setEnableLoadmore(true);
-//        refreshLayout.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-////                if (stickyNavLayout.canScrollVertically(-1))
-////                    //distanceY>0
-////                    //stickyNavLayout.canScrollVertically(-1))=false 不能下拉
-////                    //
-//                float currentY = 0;
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        currentY = event.getY();
-//                        break;
-//                    case MotionEvent.ACTION_MOVE:
-//                        float dy=event.getY()-currentY;
-//                        if (dy>0&&!stickyNavLayout.canScrollVertically(-1)){
-//                            return false;
-//                        }
-//                        if (dy<0&&!stickyNavLayout.canScrollVertically(0)){
-//                            return false;
-//                        }
-//                        currentY=event.getY();
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
-        /*
-        RelativeLayout ll = (RelativeLayout) findViewById(R.id.id_stickynavlayout_topview);
-		TextView tv = new TextView(this);
-		tv.setText("我的动态添加的");
-		tv.setBackgroundColor(0x77ff0000);
-		ll.addView(tv, new RelativeLayout.LayoutParams(
-				RelativeLayout.LayoutParams.MATCH_PARENT, 600));
-		*/
     }
-
-
 }

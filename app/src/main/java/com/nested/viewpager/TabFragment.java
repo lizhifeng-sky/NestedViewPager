@@ -24,9 +24,8 @@ import java.util.List;
 public class TabFragment extends Fragment {
     public static final String TITLE = "title";
     private String mTitle = "Defaut Value";
-    private LoadMoreRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private CommonAdapter<String> adapter;
-    // private TextView mTextView;
     private List<String> mDatas = new ArrayList<String>();
 
     @Override
@@ -54,18 +53,7 @@ public class TabFragment extends Fragment {
             }
         };
         mRecyclerView.setAdapter(adapter);
-
-        mRecyclerView.setLoadMoreListener(new LoadMoreRecyclerView.LoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                for (int i = 0; i < 10; i++) {
-                    mDatas.add("load  +" + i);
-                }
-                adapter.notifyDataSetChanged();
-            }
-        });
         return view;
-
     }
 
     public static TabFragment newInstance(String title) {

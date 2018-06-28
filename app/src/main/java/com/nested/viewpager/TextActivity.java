@@ -17,7 +17,7 @@ public class TextActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text);
-        LoadMoreRecyclerView mRecyclerView = findViewById(R.id.recycler);
+        LoadRecyclerView mRecyclerView = findViewById(R.id.recycler);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         for (int i = 0; i < 50; i++) {
             mDatas.add(" title  " + " -> " + i);
@@ -30,13 +30,29 @@ public class TextActivity extends AppCompatActivity {
         };
         mRecyclerView.setAdapter(adapter);
 
-        mRecyclerView.setLoadMoreListener(new LoadMoreRecyclerView.LoadMoreListener() {
+        mRecyclerView.setLoadMoreListener(new LoadRecyclerView.LoadMoreListener() {
             @Override
             public void onLoadMore() {
-                for (int i = 0; i < 10; i++) {
-                    mDatas.add("load  +" + i);
-                }
-                adapter.notifyDataSetChanged();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (int i = 0; i < 10; i++) {
+                                    mDatas.add("load  +" + i);
+                                }
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                }).start();
+
             }
         });
     }

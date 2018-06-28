@@ -27,33 +27,41 @@
         android:background="@color/Blue"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <com.nested.viewpager.StickTopLayout
             android:id="@+id/id_stickynavlayout_topview"
             android:layout_width="match_parent"
-            android:layout_height="1200dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:background="#4400ff00">
 
-            <TextView
-                android:id="@+id/title"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="软件介绍"
-                android:textSize="30sp"
-                android:textStyle="bold" />
+                android:orientation="vertical">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/title" />
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="软件介绍"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/recycler"
-                android:text="@string/hText" />
-        </RelativeLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler"
+                    android:layout_width="2400dp"
+                    android:layout_height="200dp"
+                    android:layout_below="@id/title" />
+
+                <TextView
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/recycler"
+                    android:text="@string/hText" />
+            </LinearLayout>
+
+        </com.nested.viewpager.StickTopLayout>
 
         <com.nested.viewpager.SimpleViewPagerIndicator
             android:id="@+id/id_stickynavlayout_indicator"
